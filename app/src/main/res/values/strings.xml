@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">KotlinGoogleMaps</string>
+    <string name="toolbar_title">KotlinGoogleMaps</string>
+
+    <!--Map-->
+    <string name="fragment_map_label">Map</string>
+    <string name="map_no_results">No vehicles found within those bounds…</string>
+
 </resources>
