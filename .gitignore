@@ -4,6 +4,9 @@
 ### AndroidStudio ###
 # Covers files to be ignored for android development using Android Studio.
 
+#Keystores
+keystores/
+
 # Built application files
 *.apk
 *.ap_
@@ -18,6 +21,8 @@
 bin/
 gen/
 out/
+release/
+debug/
 
 # Gradle files
 .gradle
