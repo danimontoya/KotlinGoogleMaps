@@ -18,10 +18,39 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile file("keystores/debug/debug.jks")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
         release {
+            storeFile file("keystores/release/release.jks")
+            storePassword "freenowpassword"
+            keyAlias "freenowalias"
+            keyPassword "freenowpassword"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            debuggable true
+            useProguard false
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles fileTree(dir: "${project.rootDir}/proguard_libs", include: ["*.pro"]).asList().toArray()
         }
     }
 
@@ -111,7 +140,7 @@ dependencies {
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
     testImplementation "org.amshove.kluent:kluent:1.14"
     androidTestImplementation 'org.mockito:mockito-android:2.22.0'
-    androidTestImplementation "androidx.arch.core:core-testing:2.0.1"
+    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     testImplementation 'androidx.room:room-testing:2.1.0'
