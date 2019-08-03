@@ -1,6 +1,5 @@
 package com.assignment.kotlingooglemaps.core.extension
 
-import android.content.Context
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -20,5 +19,3 @@ inline fun <reified T : ViewModel> Fragment.viewModel(factory: Factory, body: T.
 }
 
 val BaseFragment.viewContainer: View get() = (activity as MainActivity).root
-
-val BaseFragment.appContext: Context get() = activity?.applicationContext!!

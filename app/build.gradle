@@ -90,6 +90,12 @@ dependencies {
     // LiveData & ViewModel
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
+    // Google maps
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+    // Google maps utils
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+
     // LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:1.6.2"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.2"

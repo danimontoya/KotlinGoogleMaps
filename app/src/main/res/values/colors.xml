@@ -7,4 +7,6 @@
 
     <color name="colorAccent">#FFCC00</color>
 
+    <color name="info_window_background">#BBFFFFFF</color>
+
 </resources>

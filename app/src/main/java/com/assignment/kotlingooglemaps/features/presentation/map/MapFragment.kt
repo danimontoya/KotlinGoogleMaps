@@ -1,35 +1,29 @@
 package com.assignment.kotlingooglemaps.features.presentation.map
 
 import android.os.Bundle
-import android.view.View
+import android.view.LayoutInflater
 import com.assignment.kotlingooglemaps.R
 import com.assignment.kotlingooglemaps.core.exception.Failure
-import com.assignment.kotlingooglemaps.core.extension.failure
-import com.assignment.kotlingooglemaps.core.extension.gone
-import com.assignment.kotlingooglemaps.core.extension.observe
-import com.assignment.kotlingooglemaps.core.extension.viewModel
-import com.assignment.kotlingooglemaps.core.platform.BaseFragment
+import com.assignment.kotlingooglemaps.core.extension.*
 import com.assignment.kotlingooglemaps.features.presentation.model.VehicleView
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.fragment_map.*
 import timber.log.Timber
 
 /**
  * Created by danieh on 01/08/2019.
  */
-class MapFragment : BaseFragment() {
+class MapFragment : BaseMapFragment() {
 
     companion object {
         private val TAG = MapFragment::class.java.simpleName
-
-        private const val p1Lat = 53.694865
-        private const val p1Lon = 9.757589
-        private const val p2Lat = 53.394655
-        private const val p2Lon = 10.099891
     }
 
-    override fun layoutId() = R.layout.fragment_map
-
     private lateinit var viewModel: MapViewModel
+
+    private var clusterManager: ClusterManager<VehicleView>? = null
+    private var previousCameraPosition: Array<CameraPosition?> = arrayOfNulls(1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,20 +36,60 @@ class MapFragment : BaseFragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setupDone() {
+        progress_vehicles.gone()
 
-        viewModel.getVehiclesInBounds(p1Lat, p1Lon, p2Lat, p2Lon)
+        // Setup clusterManager
+        clusterManager = ClusterManager(context, map)
+        map.setOnCameraIdleListener {
+            val position = map.cameraPosition
+            previousCameraPosition[0]?.let {
+                if (it.zoom != position.zoom) {
+                    previousCameraPosition[0] = map.cameraPosition
+                }
+            }
+            clusterManager?.cluster()
+        }
+        clusterManager?.let {
+            it.renderer = VehicleClusterRenderer(context, map, it)
+
+            it.setOnClusterClickListener {
+                // if true, do not move camera
+                false
+            }
+
+            it.setOnClusterItemClickListener {
+                // if true, click handling stops here and do not show info view, do not move camera you can avoid this by calling:
+                // renderer.getMarker(clusterItem).showInfoWindow();
+                false
+            }
+            map.setOnMarkerClickListener(it)
+
+            it.markerCollection.setOnInfoWindowAdapter(VehicleInfoViewAdapter(LayoutInflater.from(context)))
+            map.setInfoWindowAdapter(it.markerManager)
+            it.setOnClusterItemInfoWindowClickListener { vehicleItem -> notifyShort("Item: ${vehicleItem.title} clicked!") }
+            map.setOnInfoWindowClickListener(it)
+        }
+
+        // Get vehicles
+        notifyShort(getString(R.string.map_fetch_vehicles))
+        progress_vehicles.visible()
+        viewModel.getVehiclesInBounds(P1_LAT, P1_LON, P2_LAT, P2_LON)
     }
 
     private fun onVehiclesFetched(vehicles: List<VehicleView>?) {
         progress_vehicles.gone()
-        if (vehicles != null && vehicles.isNotEmpty()) {
-            vehicles_text.text = vehicles.toString()
-
+        if (!vehicles.isNullOrEmpty()) {
+            clusterManager?.clearItems()
+            addMarkersToCluster(vehicles)
+            clusterManager?.cluster()
         } else {
-            notify(getString(R.string.map_no_results))
+            notifyLong(getString(R.string.map_no_results))
         }
+    }
+
+    private fun addMarkersToCluster(vehicles: List<VehicleView>) {
+        clusterManager?.addItems(vehicles.toMutableList())
     }
 
     private fun showError(failure: Failure?) {
@@ -66,6 +100,4 @@ class MapFragment : BaseFragment() {
             }
         }
     }
-
-
 }

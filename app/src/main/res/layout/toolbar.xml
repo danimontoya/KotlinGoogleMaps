@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="4dp"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    app:expanded="false">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
