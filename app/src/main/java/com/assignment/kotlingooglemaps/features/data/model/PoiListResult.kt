@@ -12,10 +12,6 @@ data class VehicleEntity(
     val coordinate: Coordinate,
     val heading: Double
 ) {
-    companion object {
-        fun empty() = VehicleEntity(0, "", Coordinate(0.0, 0.0), 0.0)
-    }
-
     fun toVehicle() = Vehicle(id, fleetType, coordinate.latitude, coordinate.longitude, heading)
 }
 
