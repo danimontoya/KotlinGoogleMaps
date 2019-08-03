@@ -28,7 +28,6 @@ class MapFragment : BaseMapFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
-        setHasOptionsMenu(true)
 
         viewModel = viewModel(viewModelFactory) {
             observe(vehicleList, ::onVehiclesFetched)
@@ -51,17 +50,20 @@ class MapFragment : BaseMapFragment() {
             clusterManager?.cluster()
         }
         clusterManager?.let {
-            it.renderer = VehicleClusterRenderer(context, map, it)
+            val vehicleClusterRenderer = VehicleClusterRenderer(context, map, it)
+            it.renderer = vehicleClusterRenderer
 
             it.setOnClusterClickListener {
                 // if true, do not move camera
                 false
             }
 
-            it.setOnClusterItemClickListener {
-                // if true, click handling stops here and do not show info view, do not move camera you can avoid this by calling:
-                // renderer.getMarker(clusterItem).showInfoWindow();
-                false
+            it.setOnClusterItemClickListener { vehicleView ->
+                animateCamera(vehicleView.latLng, VEHICLE_ZOOM)
+                vehicleClusterRenderer.getMarker(vehicleView).showInfoWindow()
+
+                // if returns true, click handling stops here and do not show info view, do not move camera you can avoid this by calling:
+                true
             }
             map.setOnMarkerClickListener(it)
 

@@ -9,9 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.assignment.kotlingooglemaps.KotlinGoogleMapsApp
 import com.assignment.kotlingooglemaps.core.di.ApplicationComponent
 import com.assignment.kotlingooglemaps.core.extension.viewContainer
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 /**
@@ -30,10 +28,6 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(layoutId(), container, false)
-
-    internal fun hideAppBarLayout() {
-        (activity?.appbar as AppBarLayout).setExpanded(false)
-    }
 
     internal fun notifyLong(message: String) = Snackbar.make(viewContainer, message, Snackbar.LENGTH_LONG).show()
 

@@ -3,7 +3,7 @@
     <string name="toolbar_title">KotlinGoogleMaps</string>
 
     <!--Map-->
-    <string name="fragment_map_label">Map</string>
+    <string name="fragment_map_label">Select your vehicle</string>
     <string name="map_no_results">No vehicles found within those bounds…</string>
     <string name="map_fetch_vehicles">Fetching vehicles… just one sec!!</string>
 

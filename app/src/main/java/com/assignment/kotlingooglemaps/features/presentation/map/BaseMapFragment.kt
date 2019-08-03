@@ -10,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -30,6 +31,7 @@ abstract class BaseMapFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.O
 
         val HAMBURG = LatLng(53.551086, 9.993682)
 
+        const val VEHICLE_ZOOM = 16.0F
         const val CITY_ZOOM_FAR = 9.0F
     }
 
@@ -72,13 +74,22 @@ abstract class BaseMapFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.O
 
         map.setOnMarkerClickListener(this)
 
-        // move the camera to Amsterdam
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, CITY_ZOOM_FAR))
+        // move the camera to Hamburg
+        animateCamera(HAMBURG, CITY_ZOOM_FAR)
 
         map.apply {
             isBuildingsEnabled = true
         }
         setupDone()
+    }
+
+    internal fun animateCamera(target: LatLng, zoom: Float) {
+        val position = CameraPosition.Builder()
+            .target(target)
+            .zoom(zoom)
+            .bearing(0f)
+            .build()
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(position))
     }
 
     override fun onMarkerClick(p0: Marker?) = false
